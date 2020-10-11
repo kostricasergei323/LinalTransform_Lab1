@@ -32,6 +32,7 @@ namespace LinalTransform_Lab1
             button2.Text = "Зсув";
             button3.Text = "Поворот";
             button4.Text = "Скинути до початкових";
+            button5.Text = "Застосувати";
             groupBox1.Text = "Величини:";
             label1.Text = "Сторона шестикутника:";
             label3.Text = "Радіус центрального кола та діагональних дуг:";
@@ -50,6 +51,13 @@ namespace LinalTransform_Lab1
             bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             g = Graphics.FromImage(bitmap);
             g.SmoothingMode = SmoothingMode.AntiAlias;
+            var affinValues = g.Transform.Elements;
+            numericUpDown4.Value = (int)affinValues[0];
+            numericUpDown5.Value = (int)affinValues[1];
+            numericUpDown6.Value = (int)affinValues[2];
+            numericUpDown7.Value = (int)affinValues[3];
+            numericUpDown8.Value = (int)affinValues[4];
+            numericUpDown9.Value = (int)affinValues[5];
             figure = new Figure(g, new Pen(Color.Black, 2f), gridCenter);
             button1.PerformClick();
         }
@@ -140,7 +148,10 @@ namespace LinalTransform_Lab1
         private void button1_Click(object sender, EventArgs e)
         {
             var tempTransform = g.Transform.Clone();
-            g.ResetTransform();
+            if(numericUpDown4.Value == 1 && numericUpDown7.Value == 1 && numericUpDown5.Value == 0 && numericUpDown6.Value == 0 && numericUpDown8.Value == 0)
+            {
+                g.ResetTransform();
+            }
             g.Clear(Color.White);
             if (checkBox2.Checked)
             {
@@ -193,11 +204,29 @@ namespace LinalTransform_Lab1
             polygonSideSize = trackBar1.Value * 16;
             diagonalRadius = trackBar2.Value * 32;
             axesRadius = trackBar3.Value * 32;
-            numericUpDown1.Value = numericUpDown2.Value = numericUpDown3.Value = 0;
+            numericUpDown1.Value = numericUpDown2.Value = numericUpDown3.Value = numericUpDown5.Value = numericUpDown6.Value = numericUpDown8.Value = numericUpDown9.Value = 0;
+            numericUpDown4.Value = numericUpDown7.Value = 1;
             g.ResetTransform();
             button1.PerformClick();
             g.FillRectangle(Brushes.Red, new Rectangle(510, 382, 4, 4));
         }
+        private void button5_Click(object sender, EventArgs e)
+        {
+            g.Clear(Color.White);
+            g.ResetTransform();
+            g.Transform = new Matrix(
+                (float)numericUpDown4.Value, (float)numericUpDown5.Value,
+                (float)numericUpDown6.Value, (float)numericUpDown7.Value,
+                (float)numericUpDown8.Value, (float)numericUpDown9.Value);
+            if (checkBox2.Checked)
+            {
+                DrawGrid();
+            }
+            DrawAxes();
+            DrawFigure();
+            g.FillRectangle(Brushes.Blue, new Rectangle(gridCenter.X - 2, gridCenter.Y - 2, 4, 4));
+        }
+
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             button1.PerformClick();
@@ -207,6 +236,5 @@ namespace LinalTransform_Lab1
         {
             button1.PerformClick();
         }
-
     }
 }
