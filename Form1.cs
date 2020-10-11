@@ -16,6 +16,7 @@ namespace LinalTransform_Lab1
         Graphics g;
         Bitmap bitmap;
         Figure figure;
+        Point gridCenter { get; set; } = new Point(512, 384);
         int polygonSideSize { get; set; }
         int diagonalRadius { get; set; }
         int axesRadius { get; set; }
@@ -28,19 +29,29 @@ namespace LinalTransform_Lab1
         {
             this.Text = "Лабораторна робота №1";
             button1.Text = "Перетворити";
+            button2.Text = "Зсув";
+            button3.Text = "Поворот";
+            button4.Text = "Скинути до початкових";
             groupBox1.Text = "Величини:";
             label1.Text = "Сторона шестикутника:";
             label3.Text = "Радіус центрального кола та діагональних дуг:";
             label5.Text = "Радіус осьових дуг:";
+            label7.Text = "dX=";
+            label8.Text = "dY=";
             checkBox1.Text = "Автоматичне перетворення";
-            label2.Text = label4.Text = label6.Text = trackBar1.Value.ToString();
+            checkBox2.Text = "Сітка";
+            label2.Text = trackBar1.Value.ToString();
+            label4.Text = trackBar2.Value.ToString();
+            label6.Text = trackBar3.Value.ToString();
+            this.MaximumSize = this.MinimumSize = this.Size;
             polygonSideSize = trackBar1.Value * 16;
             diagonalRadius = trackBar2.Value * 32;
             axesRadius = trackBar3.Value * 32;
             bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             g = Graphics.FromImage(bitmap);
             g.SmoothingMode = SmoothingMode.AntiAlias;
-            figure = new Figure(g, new Pen(Color.Black, 2f), new Point(512, 384));
+            figure = new Figure(g, new Pen(Color.Black, 2f), gridCenter);
+            button1.PerformClick();
         }
 
         private void DrawGrid()
@@ -64,6 +75,9 @@ namespace LinalTransform_Lab1
                     new Point(0, i * 16),
                     new Point(pictureBox1.Width, i * 16));
             }
+
+            // Central Dot
+            g.FillRectangle(Brushes.Red, new Rectangle(510, 382, 4, 4));
         }
 
         private void DrawAxes()
@@ -117,19 +131,82 @@ namespace LinalTransform_Lab1
                 button1.PerformClick();
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+
+        private void DrawFigure()
         {
-            g.Clear(Color.White);
-            g.ResetTransform();
-            DrawGrid();
-            DrawAxes();
             figure.DrawFigure(polygonSideSize, diagonalRadius, axesRadius);
             pictureBox1.Image = bitmap;
         }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var tempTransform = g.Transform.Clone();
+            g.ResetTransform();
+            g.Clear(Color.White);
+            if (checkBox2.Checked)
+            {
+                DrawGrid();
+            }
+            DrawAxes();
+            g.Transform = tempTransform;
+            DrawFigure();
+            if(gridCenter.X != 512 || gridCenter.Y != 384)
+            { 
+                g.FillRectangle(Brushes.Blue, new Rectangle(gridCenter.X - 2, gridCenter.Y - 2, 4, 4));
+            }
+        }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            gridCenter = Figure.gridCenter = new Point(gridCenter.X + (int)numericUpDown1.Value * 16, gridCenter.Y - (int)numericUpDown2.Value * 16);
+            button1.PerformClick();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var tempTransform = g.Transform.Clone();
+            g.ResetTransform();
+            g.Clear(Color.White);
+            if (checkBox2.Checked)
+            {
+                DrawGrid();
+            }
+            DrawAxes();
+            g.Transform = tempTransform;
+            g.RotateTransform((int)numericUpDown3.Value);
+            DrawFigure();
+            g.FillRectangle(Brushes.Blue, new Rectangle(gridCenter.X - 2, gridCenter.Y - 2, 4, 4));
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            checkBox1.Checked = false;
+            checkBox2.Checked = true;
+            trackBar1.Value = 12;
+            label2.Text = trackBar1.Value.ToString();
+            trackBar2.Maximum = 9;
+            trackBar2.Value = 5;
+            label4.Text = trackBar2.Value.ToString();
+            trackBar3.Maximum = 12;
+            trackBar3.Value = 3;
+            label6.Text = trackBar3.Value.ToString();
+            gridCenter = Figure.gridCenter = new Point(512, 384);
+            polygonSideSize = trackBar1.Value * 16;
+            diagonalRadius = trackBar2.Value * 32;
+            axesRadius = trackBar3.Value * 32;
+            numericUpDown1.Value = numericUpDown2.Value = numericUpDown3.Value = 0;
+            g.ResetTransform();
+            button1.PerformClick();
+            g.FillRectangle(Brushes.Red, new Rectangle(510, 382, 4, 4));
+        }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             button1.PerformClick();
         }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            button1.PerformClick();
+        }
+
     }
 }

@@ -11,7 +11,7 @@ namespace LinalTransform_Lab1
     {
         public Graphics g { get; set; }
         public Pen figurePen { get; set; }
-        public Point gridCenter { get; set; }
+        public static Point gridCenter { get; set; }
 
         public Figure(Graphics graphics, Pen pen, Point center)
         {
