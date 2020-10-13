@@ -37,6 +37,8 @@ namespace LinalTransform_Lab1
             checkBox1.Text = "Автоматичне перетворення";
             checkBox2.Text = "Сітка";
             checkBox3.Text = "Осі координат";
+            checkBox4.Text = "Навколо осі";
+            
             label2.Text = trackBar1.Value.ToString();
             label4.Text = trackBar2.Value.ToString();
             label6.Text = trackBar3.Value.ToString();
@@ -54,6 +56,8 @@ namespace LinalTransform_Lab1
             numericUpDown7.Value = (int)affinValues[3];
             numericUpDown8.Value = (int)affinValues[4];
             numericUpDown9.Value = (int)affinValues[5];
+            numericUpDown10.Value = numericUpDown11.Value = 0;
+            numericUpDown10.Enabled = numericUpDown11.Enabled = false;
             figure = new Figure(g, new Pen(Color.Black, 2f), gridCenter);
             button1.PerformClick();
         }
@@ -252,8 +256,9 @@ namespace LinalTransform_Lab1
                 DrawAxes();
             }
             g.FillRectangle(Brushes.Red, new Rectangle(510, 382, 4, 4));
+
+            tTransform.RotateAt((int)numericUpDown3.Value, checkBox4.Checked?gridCenter: new Point(512 + (int)numericUpDown10.Value*16, 384 - (int)numericUpDown11.Value * 16));
             g.Transform = tTransform;
-            g.RotateTransform((int)numericUpDown3.Value);
             DrawFigure();
             if (gridCenter.X != 512 || gridCenter.Y != 384)
             {
@@ -264,7 +269,7 @@ namespace LinalTransform_Lab1
         private void button4_Click(object sender, EventArgs e)
         {
             checkBox1.Checked = false;
-            checkBox2.Checked = checkBox3.Checked = true;
+            checkBox2.Checked = checkBox3.Checked = checkBox4.Checked = true;
             trackBar1.Value = 12;
             label2.Text = trackBar1.Value.ToString();
             trackBar2.Maximum = 9;
@@ -277,8 +282,11 @@ namespace LinalTransform_Lab1
             polygonSideSize = trackBar1.Value * 16;
             diagonalRadius = trackBar2.Value * 32;
             axesRadius = trackBar3.Value * 32;
-            numericUpDown1.Value = numericUpDown2.Value = numericUpDown3.Value = numericUpDown5.Value = numericUpDown6.Value = numericUpDown8.Value = numericUpDown9.Value = 0;
+            numericUpDown1.Value = numericUpDown2.Value = numericUpDown3.Value = 
+                numericUpDown5.Value = numericUpDown6.Value = numericUpDown8.Value = 
+                numericUpDown9.Value = numericUpDown10.Value = numericUpDown11.Value = 0;
             numericUpDown4.Value = numericUpDown7.Value = 1;
+            numericUpDown10.Enabled = numericUpDown11.Enabled = false;
             TempTransform = null;
             g.ResetTransform();
             button1.PerformClick();
@@ -322,6 +330,12 @@ namespace LinalTransform_Lab1
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             button1.PerformClick();
+        }
+
+        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            numericUpDown10.Enabled = numericUpDown11.Enabled = !numericUpDown10.Enabled;
+            numericUpDown10.Value = numericUpDown11.Value = 0;
         }
     }
 }
